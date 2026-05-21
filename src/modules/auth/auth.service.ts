@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { pool } from "./../../db/index";
 
-import jwt, { type JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import config from "../../config";
 import type { RegisterPayload } from "../../types";
 
