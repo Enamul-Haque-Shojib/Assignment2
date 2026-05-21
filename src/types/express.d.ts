@@ -1,5 +1,4 @@
 
-
 declare global {
 
   namespace Express {

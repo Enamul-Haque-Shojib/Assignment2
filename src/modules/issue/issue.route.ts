@@ -7,8 +7,8 @@ import auth from "../../middleware/auth";
 const router = Router();
 
 router.post("/",
-auth(USER_ROLE.contributor, USER_ROLE.maintainer),
-   issueController.createIssue);
+  auth(USER_ROLE.contributor, USER_ROLE.maintainer),
+  issueController.createIssue);
 
    
 router.get(
@@ -21,19 +21,18 @@ router.get(
   issueController.getSingleIssue
 );
 
-// issue.route.ts
+
 
 router.patch(
   "/:id",
-//   verifyToken,
+  auth(USER_ROLE.contributor, USER_ROLE.maintainer),
   issueController.updateIssue
 );
 
-// issue.route.ts
 
 router.delete(
   "/:id",
-//   verifyToken,
+  auth(USER_ROLE.maintainer),
   issueController.deleteIssue
 );
 
