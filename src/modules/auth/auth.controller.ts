@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { authService } from "./auth.service";
+import { StatusCodes } from "http-status-codes";
 
 
 const registerUser = async (req: Request, res: Response) => {
@@ -7,7 +8,7 @@ const registerUser = async (req: Request, res: Response) => {
   try {
     const result = await authService.registerUserIntoDB(req.body);
     
-    res.status(201).json({
+    res.status(StatusCodes.CREATED).json({
       success: true,
       message: "User registered successfully",
       data: result.rows[0],
@@ -15,7 +16,7 @@ const registerUser = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
   
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: err.message,
     });
@@ -51,7 +52,7 @@ async (
     );
 
  
-    res.status(200).json({
+    res.status(StatusCodes.OK).json({
       success: true,
       message:
         "Login successful",
@@ -71,7 +72,7 @@ async (
       error.message ===
       "Invalid credentials"
     ) {
-      return res.status(401).json({
+      return res.status(StatusCodes.UNAUTHORIZED).json({
         success: false,
         message:
           error.message,
@@ -79,7 +80,7 @@ async (
     }
 
     
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message:
         error.message,

@@ -3,6 +3,7 @@ import jwt, { type JwtPayload } from "jsonwebtoken";
 import config from "../config";
 import { pool } from "../db";
 import type { ROLES } from "../types";
+import { StatusCodes } from "http-status-codes";
 
 const auth = (...roles: ROLES[]) => {
 
@@ -14,7 +15,7 @@ const auth = (...roles: ROLES[]) => {
 
   
       if (!token) {
-        res.status(401).json({
+        res.status(StatusCodes.UNAUTHORIZED).json({
           success: false,
           message: "Unauthorized access!!",
         });
@@ -40,7 +41,7 @@ const auth = (...roles: ROLES[]) => {
 
     
       if (userData.rows.length === 0) {
-        res.status(404).json({
+        res.status(StatusCodes.NOT_FOUND).json({
           success: false,
           message: "User not found!",
         });
@@ -49,7 +50,7 @@ const auth = (...roles: ROLES[]) => {
   
 
       if (roles.length && !roles.includes(user.role)) {
-        res.status(403).json({
+        res.status(StatusCodes.FORBIDDEN).json({
           success: false,
           message: "Forbidden!!,This role have no access!",
         });

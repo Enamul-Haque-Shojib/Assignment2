@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 
 import { GetIssuesQuery } from "../../types";
 import { issueService } from "./issue.service";
+import { StatusCodes } from "http-status-codes";
 
 export const createIssue = async (
   req: Request,
@@ -21,7 +22,7 @@ export const createIssue = async (
         reporterId
       );
 
-    res.status(201).json({
+    res.status(StatusCodes.CREATED).json({
       success: true,
       message:
         "Issue created successfully",
@@ -30,7 +31,7 @@ export const createIssue = async (
 
   } catch (err: any) {
 
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: err.message,
     });
@@ -51,14 +52,14 @@ async (
           req.query as GetIssuesQuery
         );
 
-    res.status(200).json({
+    res.status(StatusCodes.OK).json({
       success: true,
       data: result,
     });
 
   } catch (err: any) {
 
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: err.message,
     });
@@ -83,14 +84,14 @@ async (
           issueId
         );
 
-    res.status(200).json({
+    res.status(StatusCodes.ACCEPTED).json({
       success: true,
       data: result,
     });
 
   } catch (err: any) {
 
-    res.status(404).json({
+    res.status(StatusCodes.NOT_FOUND).json({
       success: false,
       message: err.message,
     });
@@ -122,7 +123,7 @@ async (
           currentUser
         );
 
-    res.status(200).json({
+    res.status(StatusCodes.ACCEPTED).json({
       success: true,
       message:
         "Issue updated successfully",
@@ -136,7 +137,7 @@ async (
       err.message ===
       "Issue not found"
     ) {
-      return res.status(404).json({
+      return res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: err.message,
       });
@@ -150,13 +151,13 @@ async (
         "Contributors"
       )
     ) {
-      return res.status(403).json({
+      return res.status(StatusCodes.FORBIDDEN).json({
         success: false,
         message: err.message,
       });
     }
 
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: err.message,
     });
@@ -186,7 +187,7 @@ async (
         currentUser
       );
 
-    res.status(200).json({
+    res.status(StatusCodes.OK).json({
       success: true,
       message:
         "Issue deleted successfully",
@@ -199,7 +200,7 @@ async (
       err.message ===
       "Issue not found"
     ) {
-      return res.status(404).json({
+      return res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: err.message,
       });
@@ -211,14 +212,14 @@ async (
         "maintainers"
       )
     ) {
-      return res.status(403).json({
+      return res.status(StatusCodes.FORBIDDEN).json({
         success: false,
         message: err.message,
       });
     }
 
  
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: err.message,
     });

@@ -9,6 +9,7 @@ import express, {
 import { authRoute } from "./modules/auth/auth.route";
 import globalErrorHandler from "./middleware/globalErrorHandler";
 import { issueRoute } from "./modules/issue/issue.route";
+import { StatusCodes } from "http-status-codes";
 const app: Application = express();
 
 app.use(CookieParser());
@@ -24,7 +25,7 @@ app.use(
 
 app.get("/", (req: Request, res: Response) => {
   //res.send("Hello World!");
-  res.status(200).json({
+  res.status(StatusCodes.OK).json({
     message: "Express Server",
     author: "Next Level",
   });
