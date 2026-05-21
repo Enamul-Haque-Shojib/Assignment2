@@ -40,22 +40,17 @@ async (
       refreshToken,
     } = result;
 
-    // =========================
-    // SET COOKIE
-    // =========================
     res.cookie(
       "refreshToken",
       refreshToken,
       {
-        secure: false, // production => true
+        secure: false, 
         httpOnly: true,
         sameSite: "lax",
       }
     );
 
-    // =========================
-    // RESPONSE
-    // =========================
+ 
     res.status(200).json({
       success: true,
       message:
@@ -71,9 +66,7 @@ async (
 
   } catch (error: any) {
 
-    // =========================
-    // INVALID CREDENTIALS
-    // =========================
+
     if (
       error.message ===
       "Invalid credentials"
@@ -85,9 +78,7 @@ async (
       });
     }
 
-    // =========================
-    // SERVER ERROR
-    // =========================
+    
     res.status(500).json({
       success: false,
       message:

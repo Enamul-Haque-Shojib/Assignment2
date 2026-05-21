@@ -17,15 +17,11 @@ const registerUserIntoDB = async (
     role = "contributor",
   } = payload;
 
-  // =========================
-  // HASH PASSWORD
-  // =========================
+  
   const hashedPassword =
     await bcrypt.hash(password, 10);
 
-  // =========================
-  // INSERT USER
-  // =========================
+
   const query = `
     INSERT INTO users (
       name,
@@ -76,9 +72,7 @@ async (
     password,
   } = payload;
 
-  // =========================
-  // VALIDATION
-  // =========================
+ 
   if (!email?.trim()) {
     throw new Error(
       "Email is required"
@@ -91,9 +85,7 @@ async (
     );
   }
 
-  // =========================
-  // CHECK USER EXISTS
-  // =========================
+  
   const userData =
     await pool.query(
       `
@@ -112,15 +104,11 @@ async (
     );
   }
 
-  // =========================
-  // USER
-  // =========================
+
   const user =
     userData.rows[0];
 
-  // =========================
-  // COMPARE PASSWORD
-  // =========================
+ 
   const isPasswordMatched =
     await bcrypt.compare(
       password,
@@ -133,9 +121,7 @@ async (
     );
   }
 
-  // =========================
-  // JWT PAYLOAD
-  // =========================
+ 
   const jwtPayload = {
     id: user.id,
     name: user.name,
@@ -143,9 +129,6 @@ async (
     email: user.email,
   };
 
-  // =========================
-  // ACCESS TOKEN
-  // =========================
   const accessToken =
     jwt.sign(
       jwtPayload,
@@ -155,9 +138,7 @@ async (
       }
     );
 
-  // =========================
-  // REFRESH TOKEN
-  // =========================
+
   const refreshToken =
     jwt.sign(
       jwtPayload,
@@ -167,9 +148,7 @@ async (
       }
     );
 
-  // =========================
-  // RETURN RESPONSE
-  // =========================
+
   return {
 
     token: accessToken,
