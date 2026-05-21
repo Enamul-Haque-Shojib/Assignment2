@@ -29,11 +29,3 @@ export type CurrentUser = {
   id: number;
   role: ROLES;
 };
-
-
-// export type JwtUserPayload = {
-//   id: number;
-//   name: string;
-//   email: string;
-//   role: ROLES;
-// };
