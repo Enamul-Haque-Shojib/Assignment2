@@ -13,11 +13,7 @@ export const createIssue = async (req: Request, res: Response) => {
    
     const reporterId = req.user?.id;
 
-    const result =
-      await issueService.createIssueIntoDB(
-        req.body,
-        reporterId
-      );
+    const result = await issueService.createIssueIntoDB(req.body, reporterId);
 
     res.status(StatusCodes.CREATED).json({
       success: true,
@@ -40,10 +36,7 @@ export const getAllIssues = async (req: Request, res: Response) => {
 
   try {
 
-    const result =
-      await issueService.getAllIssuesFromDB(
-          req.query as GetIssuesQuery
-        );
+    const result = await issueService.getAllIssuesFromDB(req.query as GetIssuesQuery);
 
     res.status(StatusCodes.OK).json({
       success: true,
@@ -64,14 +57,9 @@ const getSingleIssue = async (req: Request, res: Response) => {
 
   try {
 
-    const issueId =
-      Number(req.params.id);
+    const issueId = Number(req.params.id);
 
-    const result =
-      await issueService
-        .getSingleIssueFromDB(
-          issueId
-        );
+    const result = await issueService.getSingleIssueFromDB(issueId);
 
     res.status(StatusCodes.ACCEPTED).json({
       success: true,
@@ -92,21 +80,14 @@ const updateIssue = async (req: Request, res: Response) => {
 
   try {
 
-    const issueId =
-      Number(req.params.id);
+    const issueId = Number(req.params.id);
 
     const currentUser = {
       id: req.user?.id,
       role: req.user?.role,
     };
 
-    const result =
-      await issueService
-        .updateIssueIntoDB(
-          issueId,
-          req.body,
-          currentUser
-        );
+    const result = await issueService.updateIssueIntoDB(issueId, req.body, currentUser);
 
     res.status(StatusCodes.ACCEPTED).json({
       success: true,
@@ -118,24 +99,14 @@ const updateIssue = async (req: Request, res: Response) => {
   } catch (err: any) {
 
   
-    if (
-      err.message ===
-      "Issue not found"
-    ) {
+    if (err.message === "Issue not found") {
       return res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: err.message,
       });
     }
 
-    if (
-      err.message.includes(
-        "not allowed"
-      ) ||
-      err.message.includes(
-        "Contributors"
-      )
-    ) {
+    if (err.message.includes("not allowed") || err.message.includes("Contributors")) {
       return res.status(StatusCodes.FORBIDDEN).json({
         success: false,
         message: err.message,
@@ -150,16 +121,11 @@ const updateIssue = async (req: Request, res: Response) => {
   }
 };
 
-const deleteIssue =
-async (
-  req: Request,
-  res: Response
-) => {
+const deleteIssue = async (req: Request, res: Response) => {
 
   try {
 
-    const issueId =
-      Number(req.params.id);
+    const issueId = Number(req.params.id);
 
     const currentUser = {
       id: req.user?.id,
@@ -181,10 +147,7 @@ async (
   } catch (err: any) {
 
  
-    if (
-      err.message ===
-      "Issue not found"
-    ) {
+    if (err.message === "Issue not found") {
       return res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: err.message,
@@ -192,11 +155,7 @@ async (
     }
 
    
-    if (
-      err.message.includes(
-        "maintainers"
-      )
-    ) {
+    if (err.message.includes("maintainers")) {
       return res.status(StatusCodes.FORBIDDEN).json({
         success: false,
         message: err.message,
