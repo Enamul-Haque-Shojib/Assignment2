@@ -23,23 +23,13 @@ const registerUser = async (req: Request, res: Response) => {
   }
 };
 
-const loginUser =
-async (
-  req: Request,
-  res: Response
-) => {
+const loginUser = async (req: Request, res: Response) => {
 
   try {
 
-    const result =
-      await authService
-        .loginUserIntoDB(
-          req.body
-        );
+    const result = await authService.loginUserIntoDB(req.body);
 
-    const {
-      refreshToken,
-    } = result;
+    const {refreshToken} = result;
 
     res.cookie(
       "refreshToken",
@@ -68,10 +58,7 @@ async (
   } catch (error: any) {
 
 
-    if (
-      error.message ===
-      "Invalid credentials"
-    ) {
+    if (error.message === "Invalid credentials") {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         success: false,
         message:
