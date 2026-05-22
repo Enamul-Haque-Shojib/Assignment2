@@ -6,9 +6,7 @@ import config from "../../config";
 import type { RegisterPayload } from "../../types";
 
 
-const registerUserIntoDB = async (
-  payload: RegisterPayload
-) => {
+const registerUserIntoDB = async (payload: RegisterPayload) => {
 
   const {
     name,
@@ -18,23 +16,12 @@ const registerUserIntoDB = async (
   } = payload;
 
   
-  const hashedPassword =
-    await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
 
   const query = `
-    INSERT INTO users (
-      name,
-      email,
-      password,
-      role
-    )
-    VALUES (
-      $1,
-      $2,
-      $3,
-      $4
-    )
+    INSERT INTO users (name, email, password, role)
+    VALUES ($1, $2, $3, $4)
     RETURNING
       id,
       name,
@@ -51,26 +38,16 @@ const registerUserIntoDB = async (
     role,
   ];
 
-  const result =
-    await pool.query(query, values);
+  const result = await pool.query(query, values);
 
   return result;
 };
 
 
 
-const loginUserIntoDB =
-async (
-  payload: {
-    email: string;
-    password: string;
-  }
-) => {
+const loginUserIntoDB = async (payload: {email: string; password: string}) => {
 
-  const {
-    email,
-    password,
-  } = payload;
+  const {email, password} = payload;
 
  
   if (!email?.trim()) {
@@ -86,8 +63,7 @@ async (
   }
 
   
-  const userData =
-    await pool.query(
+  const userData = await pool.query(
       `
       SELECT *
       FROM users
@@ -96,24 +72,17 @@ async (
       [email]
     );
 
-  if (
-    userData.rows.length === 0
-  ) {
+  if (userData.rows.length === 0) {
     throw new Error(
       "Invalid credentials"
     );
   }
 
 
-  const user =
-    userData.rows[0];
+  const user = userData.rows[0];
 
  
-  const isPasswordMatched =
-    await bcrypt.compare(
-      password,
-      user.password
-    );
+  const isPasswordMatched = await bcrypt.compare(password, user.password);
 
   if (!isPasswordMatched) {
     throw new Error(
