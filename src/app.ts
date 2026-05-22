@@ -24,7 +24,6 @@ app.use(
 );
 
 app.get("/", (req: Request, res: Response) => {
-  //res.send("Hello World!");
   res.status(StatusCodes.OK).json({
     message: "Express Server",
     author: "Next Level",

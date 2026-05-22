@@ -1,26 +1,15 @@
 // issue.service.ts
 
 import { pool } from "../../db";
-import { CurrentUser, GetIssuesQuery, UpdateIssuePayload } from "../../types";
+import { CurrentUser, GetIssuesQuery, IssuePayload, UpdateIssuePayload } from "../../types";
 
 
 
-type IssuePayload = {
-  title: string;
-  description: string;
-  type: "bug" | "feature_request";
-};
 
-export const createIssueIntoDB = async (
-  payload: IssuePayload,
-  reporterId: number
-) => {
 
-  const {
-    title,
-    description,
-    type,
-  } = payload;
+export const createIssueIntoDB = async (payload: IssuePayload, reporterId: number) => {
+
+  const {title, description, type} = payload;
 
   if (!title?.trim()) {
     throw new Error(
@@ -46,10 +35,7 @@ export const createIssueIntoDB = async (
     );
   }
 
-  if (
-    type !== "bug" &&
-    type !== "feature_request"
-  ) {
+  if (type !== "bug" && type !== "feature_request") {
     throw new Error(
       "Invalid issue type"
     );
@@ -57,18 +43,8 @@ export const createIssueIntoDB = async (
 
 
   const query = `
-    INSERT INTO issues (
-      title,
-      description,
-      type,
-      reporter_id
-    )
-    VALUES (
-      $1,
-      $2,
-      $3,
-      $4
-    )
+    INSERT INTO issues (title, description, type, reporter_id)
+    VALUES ($1, $2, $3, $4)
     RETURNING
       id,
       title,
@@ -87,15 +63,12 @@ export const createIssueIntoDB = async (
     reporterId,
   ];
 
-  const result =
-    await pool.query(query, values);
+  const result = await pool.query(query, values);
 
   return result;
 };
 
-const getAllIssuesFromDB = async (
-  queryParams: GetIssuesQuery
-) => {
+const getAllIssuesFromDB = async (queryParams: GetIssuesQuery) => {
 
   const {
     sort = "newest",
@@ -126,15 +99,11 @@ const getAllIssuesFromDB = async (
   let whereClause = "";
 
   if (conditions.length > 0) {
-    whereClause =
-      `WHERE ${conditions.join(" AND ")}`;
+    whereClause = `WHERE ${conditions.join(" AND ")}`;
   }
 
 
-  const orderBy =
-    sort === "oldest"
-      ? "ASC"
-      : "DESC";
+  const orderBy = sort === "oldest" ? "ASC" : "DESC";
 
  
   const issuesQuery = `
@@ -153,13 +122,9 @@ const getAllIssuesFromDB = async (
   `;
 
   const issuesResult =
-    await pool.query(
-      issuesQuery,
-      values
-    );
+    await pool.query(issuesQuery, values);
 
-  const issues =
-    issuesResult.rows;
+  const issues = issuesResult.rows;
 
 
   const reporterIds = [
@@ -186,15 +151,9 @@ const getAllIssuesFromDB = async (
       WHERE id = ANY($1);
     `;
 
-    const reportersResult =
-      await pool.query(
-        reportersQuery,
-        [reporterIds]
-      );
+    const reportersResult = await pool.query(reportersQuery, [reporterIds]);
 
-    reportersMap =
-      reportersResult.rows.reduce(
-        (acc, reporter) => {
+    reportersMap = reportersResult.rows.reduce((acc, reporter) => {
 
           acc[reporter.id] =
             reporter;
@@ -206,13 +165,11 @@ const getAllIssuesFromDB = async (
       );
   }
 
-  const formattedIssues =
-    issues.map((issue) => ({
+  const formattedIssues = issues.map((issue) => ({
 
       id: issue.id,
       title: issue.title,
-      description:
-        issue.description,
+      description: issue.description,
       type: issue.type,
       status: issue.status,
 
@@ -231,10 +188,7 @@ const getAllIssuesFromDB = async (
   return formattedIssues;
 };
 
-const getSingleIssueFromDB =
-async (id: number) => {
-
- 
+const getSingleIssueFromDB = async (id: number) => {
   const issueQuery = `
     SELECT
       id,
@@ -249,14 +203,9 @@ async (id: number) => {
     WHERE id = $1;
   `;
 
-  const issueResult =
-    await pool.query(
-      issueQuery,
-      [id]
-    );
+  const issueResult = await pool.query(issueQuery, [id]);
 
-  const issue =
-    issueResult.rows[0];
+  const issue = issueResult.rows[0];
 
 
   if (!issue) {
@@ -275,42 +224,29 @@ async (id: number) => {
     WHERE id = $1;
   `;
 
-  const reporterResult =
-    await pool.query(
-      reporterQuery,
-      [issue.reporter_id]
-    );
+  const reporterResult = await pool.query(reporterQuery, [issue.reporter_id]);
 
-  const reporter =
-    reporterResult.rows[0] || null;
+  const reporter = reporterResult.rows[0] || null;
 
   return {
 
     id: issue.id,
     title: issue.title,
-    description:
-      issue.description,
+    description: issue.description,
     type: issue.type,
     status: issue.status,
 
     reporter,
 
-    created_at:
-      issue.created_at,
+    created_at: issue.created_at,
 
-    updated_at:
-      issue.updated_at,
+    updated_at: issue.updated_at,
   };
 };
 
 
 
-const updateIssueIntoDB =
-async (
-  issueId: number,
-  payload: UpdateIssuePayload,
-  currentUser: CurrentUser
-) => {
+const updateIssueIntoDB = async (issueId: number, payload: UpdateIssuePayload, currentUser: CurrentUser) => {
 
   const existingIssueQuery = `
     SELECT *
@@ -318,14 +254,9 @@ async (
     WHERE id = $1;
   `;
 
-  const existingIssueResult =
-    await pool.query(
-      existingIssueQuery,
-      [issueId]
-    );
+  const existingIssueResult = await pool.query(existingIssueQuery, [issueId]);
 
-  const existingIssue =
-    existingIssueResult.rows[0];
+  const existingIssue = existingIssueResult.rows[0];
 
 
   if (!existingIssue) {
@@ -335,17 +266,11 @@ async (
   }
 
 
-  const isMaintainer =
-    currentUser.role ===
-    "maintainer";
+  const isMaintainer = currentUser.role === "maintainer";
 
-  const isOwner =
-    existingIssue.reporter_id ===
-    currentUser.id;
+  const isOwner = existingIssue.reporter_id === currentUser.id;
 
-  const isOpen =
-    existingIssue.status ===
-    "open";
+  const isOpen = existingIssue.status === "open";
 
 
 
@@ -365,35 +290,21 @@ async (
   }
 
 
-  const {
-    title,
-    description,
-    type,
-  } = payload;
+  const {title, description, type} = payload;
 
-  if (
-    title !== undefined &&
-    title.length > 150
-  ) {
+  if (title !== undefined && title.length > 150) {
     throw new Error(
       "Title cannot exceed 150 characters"
     );
   }
 
-  if (
-    description !== undefined &&
-    description.length < 20
-  ) {
+  if (description !== undefined && description.length < 20) {
     throw new Error(
       "Description must be at least 20 characters"
     );
   }
 
-  if (
-    type !== undefined &&
-    type !== "bug" &&
-    type !== "feature_request"
-  ) {
+  if (type !== undefined && type !== "bug" && type !== "feature_request") {
     throw new Error(
       "Invalid issue type"
     );
@@ -413,17 +324,13 @@ async (
   if (description !== undefined) {
     values.push(description);
 
-    updates.push(
-      `description = $${values.length}`
-    );
+    updates.push(`description = $${values.length}`);
   }
 
   if (type !== undefined) {
     values.push(type);
 
-    updates.push(
-      `type = $${values.length}`
-    );
+    updates.push(`type = $${values.length}`);
   }
 
 
@@ -453,28 +360,17 @@ async (
       updated_at;
   `;
 
-  const updatedResult =
-    await pool.query(
-      updateQuery,
-      values
-    );
+  const updatedResult = await pool.query(updateQuery, values);
 
   return updatedResult.rows[0];
 };
 
 
 
-const deleteIssueFromDB =
-async (
-  issueId: number,
-  currentUser: CurrentUser
-) => {
+const deleteIssueFromDB = async (issueId: number, currentUser: CurrentUser) => {
 
 
-  if (
-    currentUser.role !==
-    "maintainer"
-  ) {
+  if (currentUser.role !== "maintainer") {
     throw new Error(
       "Only maintainers can delete issues"
     );
@@ -487,14 +383,9 @@ async (
     WHERE id = $1;
   `;
 
-  const existingIssueResult =
-    await pool.query(
-      existingIssueQuery,
-      [issueId]
-    );
+  const existingIssueResult = await pool.query(existingIssueQuery, [issueId]);
 
-  const existingIssue =
-    existingIssueResult.rows[0];
+  const existingIssue = existingIssueResult.rows[0];
 
   if (!existingIssue) {
     throw new Error(
@@ -508,10 +399,7 @@ async (
     WHERE id = $1;
   `;
 
-  await pool.query(
-    deleteQuery,
-    [issueId]
-  );
+  await pool.query(deleteQuery, [issueId]);
 
   return;
 };

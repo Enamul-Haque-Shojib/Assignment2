@@ -29,3 +29,9 @@ export type CurrentUser = {
   id: number;
   role: ROLES;
 };
+
+export type IssuePayload = {
+  title: string;
+  description: string;
+  type: "bug" | "feature_request";
+};
