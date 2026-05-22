@@ -6,10 +6,7 @@ import { GetIssuesQuery } from "../../types";
 import { issueService } from "./issue.service";
 import { StatusCodes } from "http-status-codes";
 
-export const createIssue = async (
-  req: Request,
-  res: Response
-) => {
+export const createIssue = async (req: Request, res: Response) => {
 
   try {
 
@@ -39,11 +36,7 @@ export const createIssue = async (
   }
 };
 
-export const getAllIssues =
-async (
-  req: Request,
-  res: Response
-) => {
+export const getAllIssues = async (req: Request, res: Response) => {
 
   try {
 
@@ -67,11 +60,7 @@ async (
   }
 };
 
-const getSingleIssue =
-async (
-  req: Request,
-  res: Response
-) => {
+const getSingleIssue = async (req: Request, res: Response) => {
 
   try {
 
@@ -99,11 +88,7 @@ async (
   }
 };
 
-const updateIssue =
-async (
-  req: Request,
-  res: Response
-) => {
+const updateIssue = async (req: Request, res: Response) => {
 
   try {
 

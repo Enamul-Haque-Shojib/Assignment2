@@ -35,7 +35,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/auth", authRoute);
 app.use("/api/issues", issueRoute);
 
-// Global Error Handling Middleware
+
 app.use(globalErrorHandler);
 
 export default app;
